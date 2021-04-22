@@ -1,12 +1,10 @@
 <template>
   <div class="container">
     <nav class="navbar is-fixed-top">
-      <a
-        class="button is-primary is-pulled-left"
-        href="https://contract.ritterim.com/staff/"
-        target="_blank"
+      <a class="button is-link is-pulled-left" href="https://contract.ritterim.com/staff/" target="_blank"
         >Link to Contracting app</a
       >
+      <button @click="reset" class="button is-primary">Reset</button>
     </nav>
     <section class="section">
       <h1 class="is-size-3">Commission Formatter</h1>
@@ -21,59 +19,65 @@
       </label>
       <div class="pt-3">
         <h2 class="is-size-4">Results</h2>
-        <quill-editor :content="formatText" :options="editorOption" ref="quill">
-        </quill-editor>
+        <quill-editor :content="formatText" :options="editorOption" ref="quill"> </quill-editor>
       </div>
     </section>
   </div>
 </template>
 
 <script>
-import Vue from "vue";
-import VueQuillEditor from "vue-quill-editor";
+import Vue from 'vue';
+import VueQuillEditor from 'vue-quill-editor';
 
-import "quill/dist/quill.core.css";
-import "quill/dist/quill.snow.css";
+import 'quill/dist/quill.core.css';
+import 'quill/dist/quill.snow.css';
 
 Vue.use(VueQuillEditor);
 
 export default {
-  name: "editor",
+  name: 'editor',
   data() {
     return {
-      content: "",
-      text: "",
-      title: "",
+      content: '',
+      text: '',
+      title: '',
       editorOption: {
         // some quill options
         modules: {
-          toolbar: [["bold"]],
-        },
-      },
+          toolbar: [['bold']]
+        }
+      }
     };
   },
   computed: {
     formatTitle() {
-      if (this.title.includes(":")) {
-        return this.title.replace(":", "");
+      if (this.title.includes(':')) {
+        return this.title.replace(':', '');
       }
       return this.title;
     },
     formatText() {
       if (this.title && this.text) {
-        const sections = this.text.split("|");
+        const sections = this.text.split('|');
         const lines = sections.map((line) => {
-          const split = line.split(":");
+          const split = line.split(':');
           return `${split[1].trim()} - ${split[0].trim()}`;
         });
-        const allLines = lines.join("</p><p>");
+        const allLines = lines.join('</p><p>');
         return `
           <p><strong>${this.formatTitle}</strong></p>
           <p>${allLines}</p>
         `;
       }
-      return "";
-    },
+      return '';
+    }
   },
+  methods: {
+    reset() {
+      this.content = '';
+      this.text = '';
+      this.title = '';
+    }
+  }
 };
 </script>
