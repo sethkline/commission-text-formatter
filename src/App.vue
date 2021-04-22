@@ -5,13 +5,13 @@
 </template>
 
 <script>
-import Editor from "./components/Editor";
-import "bulma/css/bulma.min.css";
+import Editor from './components/Editor';
+import 'bulma/css/bulma.min.css';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
-    Editor,
-  },
+    Editor
+  }
 };
 </script>
