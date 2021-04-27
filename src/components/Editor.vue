@@ -8,15 +8,12 @@
     </nav>
     <section class="section">
       <h1 class="is-size-3">Commission Formatter</h1>
-      <label class="label pt-3">
-        Paste product title
-        <input class="input" v-model="title" type="text" />
-      </label>
       <br />
       <label class="label">
-        Paste product commissions
+        Paste product commissions from contracting app
         <textarea class="textarea" v-model="text"></textarea>
       </label>
+      <button class="button" @click="parseText">Format</button>
       <div class="pt-3">
         <h2 class="is-size-4">Results</h2>
         <quill-editor :content="formatText" :options="editorOption" ref="quill"> </quill-editor>
@@ -41,6 +38,8 @@ export default {
       content: '',
       text: '',
       title: '',
+      products: [],
+      formatText: '',
       editorOption: {
         // some quill options
         modules: {
@@ -49,34 +48,35 @@ export default {
       }
     };
   },
-  computed: {
-    formatTitle() {
-      if (this.title.includes(':')) {
-        return this.title.replace(':', '');
-      }
-      return this.title;
-    },
-    formatText() {
-      if (this.title && this.text) {
-        const sections = this.text.split('|');
-        const lines = sections.map((line) => {
-          const split = line.split(':');
-          return `${split[1].trim()} - ${split[0].trim()}`;
-        });
-        const allLines = lines.join('</p><p>');
-        return `
-          <p><strong>${this.formatTitle}</strong></p>
-          <p>${allLines}</p>
-        `;
-      }
-      return '';
-    }
-  },
   methods: {
     reset() {
       this.content = '';
       this.text = '';
-      this.title = '';
+      this.formatText = '';
+    },
+    formatLines(text) {
+      const sections = text.split('|');
+      const lines = sections.map((line) => {
+        const split = line.split(':');
+        if (split && split[1] && split[0]) {
+          return `${split[1].trim()} - ${split[0].trim()}`;
+        }
+        return '';
+      });
+      return lines.join('</p><p>');
+    },
+    parseText() {
+      const products = this.text.split(/\n/);
+      const finalProducts = products.map((product) => {
+        let [title, ...commissions] = product.split(':');
+        commissions = commissions.join(':');
+        const formatCommission = this.formatLines(commissions);
+        return `
+          <p><strong>${title}</strong></p>
+          <p>${formatCommission}</p>
+        `;
+      });
+      this.formatText = finalProducts.join('');
     }
   }
 };
